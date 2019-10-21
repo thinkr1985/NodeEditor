@@ -1,5 +1,6 @@
 """Creating a parameter class"""
 from PyQt5 import QtGui, QtCore, QtWidgets
+
 import variables
 import connection
 import logger
@@ -47,6 +48,10 @@ class Parameter(QtWidgets.QGraphicsItem):
             self.setupLabel()
 
     def boundingRect(self):
+        """Creating Bounding box for parameter
+        Returns:
+            (QtCore.QRectF): Returns the QRectF item.
+        """
         if self.paramType == "input":
             return QtCore.QRectF(-10, (variables.NODE_HEIGHT / 5 * self.paramIndex + 10),
                 12, 12).normalized()
@@ -54,6 +59,10 @@ class Parameter(QtWidgets.QGraphicsItem):
             return QtCore.QRectF(variables.NODE_WIDTH, 30, 12, 12).normalized()
 
     def setupLabel(self):
+        """Setting up Parameter label
+        Returns:
+            (None): Returns None.
+        """
         self.label_item.setPlainText(self.paramName)
         self.label_item.setDefaultTextColor(self.labelColor)
         self.label_item.setFont(self.labelFont)
@@ -68,6 +77,15 @@ class Parameter(QtWidgets.QGraphicsItem):
         )
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """This events paints the widget on screen.
+        Args:
+            painter (QtGui.QPainter): Painter item to paint.
+            QStyleOptionGraphicsItem (): pass
+            widget ():
+
+        Returns:
+            (None): Returns None.
+        """
         if self.paramType == "input":
             self.position = [self.node.scenePos().x() - 10,
                              (variables.NODE_HEIGHT / 5 * self.paramIndex + 15) + self.node.scenePos().y()]
@@ -124,19 +142,26 @@ class Parameter(QtWidgets.QGraphicsItem):
                            targetParam.node.label, self.node.label))
             return
 
-        if self.outConnections:
-            for connec in self.outConnections:
-                if connec.targetParam.paramName == targetParam.paramName\
-                        and connec.targetParam.node in self.node.downStreamDependencies and\
-                    connec.targetParam.node.label == targetParam.node.label:
+        if not self.outConnections:
+            logger.log(
+                msg="Connecting parameter {} from node {} to parameter {}"
+                    " of node {}".format(self.paramName, self.node.label,
+                                         targetParam.paramName,
+                                         targetParam.node.label))
+            return self.connect(targetParam)
 
-                    logger.log(
-                        typ="ERROR",
-                        msg="Connection inbetween {}.{} to {}.{} already exists"
-                            .format(self.node.label, self.paramName,
-                                    targetParam.node.label,
-                                    targetParam.paramName))
-                    return
+        for connec in self.outConnections:
+            if connec.targetParam.paramName == targetParam.paramName\
+                    and connec.targetParam.node in self.node.downStreamDependencies\
+                    and connec.targetParam.node.label == targetParam.node.label:
+
+                logger.log(
+                    typ="ERROR",
+                    msg="Connection inbetween {}.{} to {}.{} already exists"
+                        .format(self.node.label, self.paramName,
+                                targetParam.node.label,
+                                targetParam.paramName))
+                return
         logger.log(msg="Connecting parameter {} from node {} to parameter {}"
                        " of node {}".format(self.paramName, self.node.label,
                                             targetParam.paramName,
@@ -144,6 +169,12 @@ class Parameter(QtWidgets.QGraphicsItem):
         return self.connect(targetParam)
 
     def connect(self, targetParam):
+        """This method connects parameter with given target parameter.
+        Args:
+            targetParam (Parameter): Target Parameter object.
+        Returns:
+            (connection.Connection): Returns connection object.
+        """
         # removing connection if has one already
         if targetParam.inConnections:
             for connect_ in targetParam.inConnections:
@@ -163,6 +194,10 @@ class Parameter(QtWidgets.QGraphicsItem):
         return con
 
     def remove(self):
+        """This method removes self from its node.
+        Returns:
+            (None): Returns None.
+        """
         # removing all connections of this parameter.
         if self.outConnections:
             for connect in self.outConnections:

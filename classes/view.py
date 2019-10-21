@@ -229,12 +229,14 @@ class GraphView(QtWidgets.QGraphicsView):
             self.scale(zoom_factor, zoom_factor)
 
     def keyPressEvent(self, event):
+        """Overriding keyPressEvent to add delete functionality"""
         if event.key() == QtCore.Qt.Key_Delete:
             self.deleteSelected()
         else:
             super().keyPressEvent(event)
 
     def deleteSelected(self):
+        """This method deletes selected Node/parameter/Connection"""
         # order is important here.
         # First we need to remove all connections and then nodes.
 
