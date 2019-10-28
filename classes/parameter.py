@@ -9,7 +9,7 @@ import logger
 class Parameter(QtWidgets.QGraphicsItem):
     """Creating a Parameter class by inheriting QtWidgets.QGraphicsItem"""
     def __init__(self,  parent=None, node=None, paramName=None, paramValue=None,
-                 paramIndex=1, paramType="input"):
+                 paramIndex=1, paramType="input", toolTip=None):
         """Initializing Parameter class.
         Args:
             parent (QtWidgets.QGraphicsItem): Parent Item of this class.
@@ -18,6 +18,7 @@ class Parameter(QtWidgets.QGraphicsItem):
             paramValue (): Value of the Parameter.
             paramIndex (int): Index of the Parameter.
             paramType (str): Type of the Parameter.
+            toolTip (str): Tool tip of Parameter in string format.
         """
         super(Parameter, self).__init__(parent=parent)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
@@ -27,21 +28,18 @@ class Parameter(QtWidgets.QGraphicsItem):
         self.scene = self.node.scene
         self.paramName = paramName
         self.paramValue = paramValue
+        self.toolTip = toolTip
+        self.setToolTip(self.toolTip)
         self.outConnections = []
         self.inConnections = []
         self.paramIndex = paramIndex
         self.label_item = QtWidgets.QGraphicsTextItem(self)
-        self.parPos = variables.PARAM_POS_OFFSET * paramIndex
-        self.position = [self.scenePos().x(), self.scenePos().y()]
-        self.labelColor = QtGui.QColor(variables.PARAM_LABEL_COLOR)
+        self.labelColor = QtGui.QColor(QtCore.Qt.white)
         self.labelFont = QtGui.QFont(variables.PARAM_LABEL_FONT)
-        self.penActive = QtGui.QPen(
-            QtGui.QColor(variables.PARAM_ACTIVE_OUTLINE_COLOR))
-        self.penInActive = QtGui.QPen(
-            QtGui.QColor(variables.PARAM_INACTIVE_OUTLINE_COLOR))
-        self.activeBrush = QtGui.QBrush(QtGui.QColor(variables.PARAM_FORE_COLOR))
-        self.inActiveBrush = QtGui.QBrush(
-            QtGui.QColor(variables.PARAM_BACK_COLOR))
+        self.penActive = QtGui.QPen(QtCore.Qt.green)
+        self.penInActive = QtGui.QPen(QtCore.Qt.white)
+        self.activeBrush = QtGui.QBrush(QtCore.Qt.red)
+        self.inActiveBrush = QtGui.QBrush(QtCore.Qt.black)
         self.outputInactiveBrush = QtGui.QBrush(QtCore.Qt.black)
         self.outputInactivePen = QtGui.QPen(QtCore.Qt.black)
         if self.paramType == "input":
@@ -53,10 +51,14 @@ class Parameter(QtWidgets.QGraphicsItem):
             (QtCore.QRectF): Returns the QRectF item.
         """
         if self.paramType == "input":
-            return QtCore.QRectF(-10, (variables.NODE_HEIGHT / 5 * self.paramIndex + 10),
-                12, 12).normalized()
+            return QtCore.QRectF(-variables.NODE_SIZE - variables.PARAM_RADIUS,
+                                 (variables.NODE_SIZE / 3 * self.paramIndex + 3)
+                                 - variables.NODE_SIZE + 3,
+                                 12, 12).normalized()
         elif self.paramType == "output":
-            return QtCore.QRectF(variables.NODE_WIDTH, 30, 12, 12).normalized()
+            return QtCore.QRectF(variables.NODE_SIZE,
+                                 -variables.NODE_SIZE / 2,
+                                 12, 12).normalized()
 
     def setupLabel(self):
         """Setting up Parameter label
@@ -68,12 +70,14 @@ class Parameter(QtWidgets.QGraphicsItem):
         self.label_item.setFont(self.labelFont)
         if self.paramType == "input":
             self.label_item.setPos(
-                2, (variables.NODE_HEIGHT / 5 * self.paramIndex + 2)
+                -variables.NODE_SIZE,
+                (variables.NODE_SIZE / 3 * self.paramIndex + 2)
+                - variables.NODE_SIZE - 3
             )
         elif self.paramType == "output":
-            self.label_item.setPos(variables.NODE_WIDTH - 40, 20)
+            self.label_item.setPos(variables.NODE_SIZE, -variables.NODE_SIZE)
         self.label_item.setTextWidth(
-            variables.NODE_WIDTH - 2
+            variables.NODE_SIZE - 2
         )
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
@@ -86,13 +90,6 @@ class Parameter(QtWidgets.QGraphicsItem):
         Returns:
             (None): Returns None.
         """
-        if self.paramType == "input":
-            self.position = [self.node.scenePos().x() - 10,
-                             (variables.NODE_HEIGHT / 5 * self.paramIndex + 15) + self.node.scenePos().y()]
-        elif self.paramType == "output":
-            self.position = [self.node.scenePos().x() + variables.NODE_WIDTH + 10,
-                             35 + self.node.scenePos().y()]
-
         self.penInActive.setWidth(1)
         self.penActive.setWidth(1)
         if self.isSelected():
@@ -107,10 +104,13 @@ class Parameter(QtWidgets.QGraphicsItem):
                     painter.setBrush(self.outputInactiveBrush)
                     painter.setPen(self.outputInactivePen)
         if self.paramType == "input":
-            painter.drawEllipse(
-                -10, (variables.NODE_HEIGHT / 5 * self.paramIndex + 10), 12, 12)
+            painter.drawEllipse(-variables.NODE_SIZE - variables.PARAM_RADIUS,
+                                (variables.NODE_SIZE / 3 * self.paramIndex + 3)
+                                - variables.NODE_SIZE + 3,
+                                variables.PARAM_RADIUS, variables.PARAM_RADIUS)
         elif self.paramType == "output":
-            painter.drawEllipse(variables.NODE_WIDTH, 30, 12, 12)
+            painter.drawEllipse(variables.NODE_SIZE, -variables.NODE_SIZE / 2,
+                                variables.PARAM_RADIUS, variables.PARAM_RADIUS)
 
     def addConnection(self, targetParam=None):
         """This method adds connection to the scene.

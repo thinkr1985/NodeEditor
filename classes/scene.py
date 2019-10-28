@@ -6,6 +6,7 @@ import variables
 import node
 import connection
 import logger
+import note
 
 
 class GraphScene(QtWidgets.QGraphicsScene):
@@ -16,6 +17,7 @@ class GraphScene(QtWidgets.QGraphicsScene):
             parent (QtWidgets.QGraphicsView): Parent widget for this class.
         """
         super(GraphScene, self).__init__(parent)
+        self.drawGrid = True
         self.backGroundImage = QtGui.QPixmap(variables.WALLPAPER)
         self.drawBackgroundImage()
         # color settings
@@ -32,20 +34,15 @@ class GraphScene(QtWidgets.QGraphicsScene):
         self.SceneWidth, self.SceneHeight = 32000, 32000
         self.setSceneRect(-self.SceneWidth/2, -self.SceneHeight/2,
                           self.SceneWidth, self.SceneHeight)
-
         self.nodes = []
-        # node_1 = self.addNode(label="read", nodeType="read", thumbnail="D:\\car_image.png")
-        # node_2 = self.addNode(label="write", nodeType="write")
-        # node_3 = self.addNode(label="image", nodeType="image")
-        # node_3.addParameter(paramName="source", paramValue=0)
-        # node_1.addParameter(paramName="color", paramValue=0)
-        # node_1.addParameter(paramName="alpha", paramValue=0)
-        # node_2.addParameter(paramName="filepath", paramValue=0)
-        for num in range(10):
+        for num in range(3):
 
             node_1 = self.addNode(label="read", nodeType="read")
             node_1.addParameter(paramName="blend", paramValue=0)
             node_1.addParameter(paramName="alpha", paramValue=0)
+            node_1.addParameter(paramName="test", paramValue=0)
+            node_1.addParameter(paramName="blah", paramValue=0)
+        #note_ = note.Note(self.nodes[0], message="Text Note", node=self.nodes[0])
 
     # node_2.addParameter(paramName="blend", paramValue=0)
 
@@ -65,7 +62,8 @@ class GraphScene(QtWidgets.QGraphicsScene):
             None
         """
         super().drawBackground(painter, rect)  # overriding the default class.
-
+        if not self.drawGrid:
+            return
         # creating a grid
         # we need to convert values to int because rect.(..) returns floats.
         left = int(math.floor(rect.left()))

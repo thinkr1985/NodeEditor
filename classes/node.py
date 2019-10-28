@@ -11,7 +11,7 @@ import logger
 class Node(QtWidgets.QGraphicsItem, object):
     """Creating Node Class by inheriting QtWidgets.QGraphicsItem"""
     def __init__(self, scene=None, label=None, nodeType=None, parent=None,
-                 thumbnail=None):
+                 thumbnail=None, toolTip=None):
         """Initializing Node Class.
         Args:
             scene (QtWidgets.QGraphicsScene): Graphics Scene item to add this
@@ -20,6 +20,7 @@ class Node(QtWidgets.QGraphicsItem, object):
             nodeType (str): Node type of this Node.
             parent (QtWidgets.QGraphicsItem): Parent widget of this class.
             thumbnail (str): Thumbnail image path of this Node. (jpg, png)
+            toolTip (str): Tool tip for node in string format.
         """
         super(Node, self).__init__(parent=parent)
         self.scene = scene
@@ -31,6 +32,9 @@ class Node(QtWidgets.QGraphicsItem, object):
         self.inConnections = []
         self.upStreamDependencies = []
         self.downStreamDependencies = []
+        self.notes = None
+        self.toolTip = toolTip
+        self.setToolTip(self.toolTip)
 
         # setting up Pens and brushes
         self.outlineSelectedPen = QtGui.QPen(
@@ -44,7 +48,7 @@ class Node(QtWidgets.QGraphicsItem, object):
         self.labelForeColor = QtGui.QColor(variables.NODE_LABEL_FORECOLOR)
         self.labelBackColor = QtGui.QColor(variables.NODE_LABEL_BACKCOLOR)
         self.labelBrush = QtGui.QBrush(self.labelBackColor)
-        self.labelFont = variables.NODE_LABEL_FONT
+        self.labelFont = QtGui.QFont("Verdana", 10)
 
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable |
                       QtWidgets.QGraphicsItem.ItemIsSelectable)
@@ -63,22 +67,20 @@ class Node(QtWidgets.QGraphicsItem, object):
             (QtCore.QRectF): Bounding box of this widget.
         """
         return QtCore.QRectF(
-            0,
-            0,
-            variables.NODE_WIDTH,
-            variables.NODE_HEIGHT
+            -variables.NODE_SIZE,
+            -variables.NODE_SIZE,
+            variables.NODE_SIZE * 2,
+            variables.NODE_SIZE * 2
         ).normalized()
 
     def setupLabel(self):
         """Setting up Title of the Node using QGraphicsTextItem"""
         self.label_item = QtWidgets.QGraphicsTextItem(self)
         self.label_item.setPlainText(self.label)
-        self.label_item.setDefaultTextColor(self.labelForeColor)
+        self.label_item.setDefaultTextColor(QtCore.Qt.white)
         self.label_item.setFont(self.labelFont)
-        self.label_item.setPos(0, -2)
-        self.label_item.setTextWidth(
-            variables.NODE_WIDTH - 2 * 5
-        )
+        self.label_item.setPos(-variables.NODE_SIZE, -variables.NODE_SIZE - 2)
+        self.label_item.setTextWidth(variables.NODE_SIZE)
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         """This events paints the Node on screen.
@@ -94,40 +96,41 @@ class Node(QtWidgets.QGraphicsItem, object):
         body = QtGui.QPainterPath()
         body.setFillRule(QtCore.Qt.WindingFill)
 
-        # create outline rectangle
-        outline = QtGui.QPainterPath()
-        outline.addRect(
-            0,
-            0,
-            variables.NODE_WIDTH + 2,
-            variables.NODE_HEIGHT + 2)
+        # create outline polygon
+        outline = QtGui.QPolygon()
+        outline.setPoints(- variables.NODE_SIZE,
+                          - variables.NODE_SIZE,
+                          - variables.NODE_SIZE,
+                          variables.NODE_SIZE,
+                          variables.NODE_SIZE,
+                          variables.NODE_SIZE,
+                          variables.NODE_SIZE,
+                          -variables.NODE_SIZE)
         if self.isSelected():
             painter.setPen(self.outlineSelectedPen)
         else:
             painter.setPen(self.outlineDeSelectedPen)
         painter.setBrush(self.bodyBrush)
-        painter.drawPath(outline.simplified())
-        # create label rectangle
-        label = QtGui.QPainterPath()
-        label.setFillRule(QtCore.Qt.WindingFill)
-        label.addRect(2,
-                      2,
-                      variables.NODE_WIDTH - 2,
-                      20
-                      )
+        painter.drawPolygon(outline)
+        # create label polygon
+        label_outline = QtGui.QPolygon()
+        label_outline.setPoints(- variables.NODE_SIZE + 1,
+                                - variables.NODE_SIZE + 1,
+                                -variables.NODE_SIZE + 1,
+                                - variables.NODE_SIZE + 19,
+                                variables.NODE_SIZE - 1,
+                                - variables.NODE_SIZE + 19,
+                                variables.NODE_SIZE - 1,
+                                - variables.NODE_SIZE+1)
         painter.setPen(QtCore.Qt.NoPen)
         painter.setBrush(self.labelBrush)
-        painter.drawPath(label.simplified())
-
-        # create body rectangle
-        body = QtGui.QPainterPath()
-        body.setFillRule(QtCore.Qt.WindingFill)
+        painter.drawPolygon(label_outline)
 
         if self.thumbnail:
             if os.path.exists(self.thumbnail):
                 pixmap = QtGui.QPixmap(self.thumbnail)
-                painter.drawPixmap(2, 20, variables.NODE_WIDTH,
-                                   variables.NODE_HEIGHT - 20, pixmap)
+                painter.drawPixmap(-variables.NODE_SIZE + 15, -variables.NODE_SIZE + 25, variables.NODE_SIZE + 30,
+                                   variables.NODE_SIZE + 30, pixmap)
 
     def addParameter(self, paramName=None, paramValue=None):
         """This method Adds parameter to Node with given name and value.
@@ -267,6 +270,28 @@ class Node(QtWidgets.QGraphicsItem, object):
         # removing node itself.
         self.scene.removeItem(self)
 
+    def addNote(self, note=None):
+        """This method adds note to the note.
+        Args:
+            note (str): Note in string format.
+        Returns:
+            (None): Returns None.
+        """
+        self.note = note
+
+    def removeNote(self):
+        """This method removes note from the node.
+        Returns:
+            (None): Returns None.
+        """
+        self.note = None
+
+    def getNote(self):
+        """"This method gets notes from current node
+        Returns:
+            (str): Returns Note as string.
+        """
+        return self.note
 
 
 

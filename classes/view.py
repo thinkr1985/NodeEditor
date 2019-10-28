@@ -181,9 +181,10 @@ class GraphView(QtWidgets.QGraphicsView):
                     self.mapToScene(event.pos()).y()
                 )
 
-                pen = QtGui.QPen(QtCore.Qt.black, 1, QtCore.Qt.DotLine)
+                pen = QtGui.QPen(QtCore.Qt.green, 2, QtCore.Qt.DotLine)
                 self.dragLine.setPen(pen)
                 self.scene.addItem(self.dragLine)
+                self.dragLine.setZValue(-1)
         super().mouseMoveEvent(event)
 
     def right_mouse_release(self, event):
@@ -249,4 +250,3 @@ class GraphView(QtWidgets.QGraphicsView):
         for item in self.scene.selectedItems():
             if isinstance(item, node.Node):
                 item.remove()
-        print(self.scene.selectedItems())
