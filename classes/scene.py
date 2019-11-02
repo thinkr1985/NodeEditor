@@ -35,6 +35,7 @@ class GraphScene(QtWidgets.QGraphicsScene):
         self.setSceneRect(-self.SceneWidth/2, -self.SceneHeight/2,
                           self.SceneWidth, self.SceneHeight)
         self.nodes = []
+
         for num in range(3):
 
             node_1 = self.addNode(label="read", nodeType="read")
