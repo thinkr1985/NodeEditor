@@ -1,3 +1,4 @@
+"""Creating a ToolBar widget for Node Editor"""
 from PyQt5 import QtWidgets, QtGui, QtCore
 import os
 
@@ -5,7 +6,12 @@ import variables
 
 
 class EditorToolBar(QtWidgets.QWidget):
+    """Creating a EditorToolBar class by inheriting QtWidgets.QWidget."""
     def __init__(self, parent=None):
+        """Initializing EditorToolBar class.
+        Args:
+            parent (QtWidgets.QWidget): Parent widget of this class.
+        """
         super(EditorToolBar, self).__init__(parent=parent)
         self.layout = QtWidgets.QHBoxLayout()
         self.setLayout(self.layout)
@@ -14,6 +20,7 @@ class EditorToolBar(QtWidgets.QWidget):
         self.setMaximumHeight(15)
         self.setMinimumHeight(15)
 
+        # adding buttons
         self.gridButton = ToolBarButton()
         self.gridButton.setToolTip("Grid On/Off")
         self.gridIcon = os.path.join(variables.ICON_PATH, "gridIcon.png")
@@ -29,25 +36,33 @@ class EditorToolBar(QtWidgets.QWidget):
         self.frameIcon = os.path.join(variables.ICON_PATH, "frameIcon.png")
         self.frameButton.setIcon(QtGui.QIcon(self.frameIcon))
 
+        # adding buttons to layout
         self.layout.addWidget(self.gridButton, QtCore.Qt.AlignLeft)
         self.layout.addWidget(self.notesButton)
         self.layout.addWidget(self.frameButton)
 
+        # adding spacer item to keep button on left side.
         self.spacerItem = QtWidgets.QSpacerItem(
             500, 10, QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Expanding)
         self.layout.addItem(self.spacerItem)
+
+        # setting a widget stylesheet
         self.setStyleSheet("""
                             EditorToolBar{
                                 background-color: gray;
                                 border-color: gray;
                             }
                             """.replace("gray", variables.SC_GRID_DARK_COLOR))
-        # adding buttons
 
 
 class ToolBarButton(QtWidgets.QPushButton):
+    """Creating TooolBarButton class by inheriting QtWidgets.QPushButton."""
     def __init__(self, parent=None):
+        """Initializing ToolBarButton class.
+        Args:
+            parent (QtWidgets.QWidget): Parent widget of this class.
+        """
         super(ToolBarButton, self).__init__(parent=parent)
         self.setCursor(QtCore.Qt.PointingHandCursor)
         self.setMaximumWidth(20)
@@ -66,6 +81,10 @@ class ToolBarButton(QtWidgets.QPushButton):
                             """)
 
     def setOnColor(self):
+        """This method sets stylesheet of the widget if turned on.
+        Returns:
+            (None): Returns None.
+        """
         self.setStyleSheet("""
                             ToolBarButton{
                                 background-color: gray;
@@ -81,6 +100,10 @@ class ToolBarButton(QtWidgets.QPushButton):
                             """)
 
     def setOffColor(self):
+        """This method sets stylesheet of the widget if turned off.
+        Returns:
+            (None): Returns None.
+        """
         self.setStyleSheet("""
                             ToolBarButton{
                                 background-color: darkgray;

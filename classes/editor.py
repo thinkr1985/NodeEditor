@@ -15,7 +15,7 @@ class GraphEditor(QtWidgets.QWidget):
             parent (QtWidgets.QWidget): Parent widget for this class.
         """
         super(GraphEditor, self).__init__(parent)
-        self.setWindowTitle("Test Window")
+        self.setWindowTitle("Node Editor")
         self.setGeometry(300, 300, 600, 300)
         self.setContentsMargins(5, 5, 5, 5)
         # adding base layout to node editor
@@ -45,9 +45,17 @@ class GraphEditor(QtWidgets.QWidget):
                             """.replace("gray", variables.SC_GRID_DARK_COLOR))
 
     def connect_(self):
+        """This method connected all widgets to their functions.
+        Returns:
+            (None): Returns None.
+        """
         self.toolBar.gridButton.clicked.connect(self.toggleGrid)
 
     def toggleGrid(self):
+        """This method toggles the grid visibility for scene.
+        Returns:
+            (None): Returns None.
+        """
         if self.graphicsView.scene.drawGrid:
             self.graphicsView.scene.drawGrid = False
             self.graphicsView.scene.update()
