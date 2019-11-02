@@ -1,0 +1,95 @@
+from PyQt5 import QtWidgets, QtGui, QtCore
+import os
+
+import variables
+
+
+class EditorToolBar(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super(EditorToolBar, self).__init__(parent=parent)
+        self.layout = QtWidgets.QHBoxLayout()
+        self.setLayout(self.layout)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setMaximumHeight(15)
+        self.setMinimumHeight(15)
+
+        self.gridButton = ToolBarButton()
+        self.gridButton.setToolTip("Grid On/Off")
+        self.gridIcon = os.path.join(variables.ICON_PATH, "gridIcon.png")
+        self.gridButton.setIcon(QtGui.QIcon(self.gridIcon))
+
+        self.notesButton = ToolBarButton()
+        self.notesButton.setToolTip("Notes On/Off")
+        self.notesIcon = os.path.join(variables.ICON_PATH, "noteIcon.png")
+        self.notesButton.setIcon(QtGui.QIcon(self.notesIcon))
+
+        self.frameButton = ToolBarButton()
+        self.frameButton.setToolTip("Frame All Node")
+        self.frameIcon = os.path.join(variables.ICON_PATH, "frameIcon.png")
+        self.frameButton.setIcon(QtGui.QIcon(self.frameIcon))
+
+        self.layout.addWidget(self.gridButton, QtCore.Qt.AlignLeft)
+        self.layout.addWidget(self.notesButton)
+        self.layout.addWidget(self.frameButton)
+
+        self.spacerItem = QtWidgets.QSpacerItem(
+            500, 10, QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Expanding)
+        self.layout.addItem(self.spacerItem)
+        self.setStyleSheet("""
+                            EditorToolBar{
+                                background-color: gray;
+                                border-color: gray;
+                            }
+                            """.replace("gray", variables.SC_GRID_DARK_COLOR))
+        # adding buttons
+
+
+class ToolBarButton(QtWidgets.QPushButton):
+    def __init__(self, parent=None):
+        super(ToolBarButton, self).__init__(parent=parent)
+        self.setCursor(QtCore.Qt.PointingHandCursor)
+        self.setMaximumWidth(20)
+        self.setStyleSheet("""
+                            ToolBarButton{
+                                background-color: gray;
+                                color: white;
+                                border-width: 5px;
+                                border-radius: 3px;
+                                border-color : black;
+                            }
+                            ToolBarButton:hover{
+                                                background-color: white;
+                                                border-width: 10px;
+                                                }
+                            """)
+
+    def setOnColor(self):
+        self.setStyleSheet("""
+                            ToolBarButton{
+                                background-color: gray;
+                                color: white;
+                                border-width: 5px;
+                                border-radius: 3px;
+                                border-color : black;
+                            }
+                            ToolBarButton:hover{
+                                                background-color: darkgray;
+                                                border-width: 10px;
+                                                }
+                            """)
+
+    def setOffColor(self):
+        self.setStyleSheet("""
+                            ToolBarButton{
+                                background-color: darkgray;
+                                color: white;
+                                border-width: 5px;
+                                border-radius: 3px;
+                                border-color : black;
+                            }
+                            ToolBarButton:hover{
+                                                background-color: gray;
+                                                }
+                            """)
