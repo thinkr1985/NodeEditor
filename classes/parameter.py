@@ -90,6 +90,7 @@ class Parameter(QtWidgets.QGraphicsItem):
         Returns:
             (None): Returns None.
         """
+
         self.penInActive.setWidth(1)
         self.penActive.setWidth(1)
         if self.isSelected():
@@ -108,6 +109,7 @@ class Parameter(QtWidgets.QGraphicsItem):
                                 (variables.NODE_SIZE / 3 * self.paramIndex + 3)
                                 - variables.NODE_SIZE + 3,
                                 variables.PARAM_RADIUS, variables.PARAM_RADIUS)
+
         elif self.paramType == "output":
             painter.drawEllipse(variables.NODE_SIZE, -variables.NODE_SIZE / 2,
                                 variables.PARAM_RADIUS, variables.PARAM_RADIUS)

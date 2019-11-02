@@ -35,9 +35,16 @@ class Connection(QtWidgets.QGraphicsPathItem):
         Returns (QtCore.QRectF): Returnsb Bounding RectF item.
 
         """
-        return QtCore.QRectF(variables.NODE_SIZE, (
-                    variables.NODE_SIZE / 5 * self.targetParam.paramIndex + 10),
-                             12, 12).normalized()
+        return QtCore.QRectF(self.sourceParam.scenePos().x() +
+                       variables.NODE_SIZE + 10,
+                       (self.sourceParam.scenePos().y() -
+                        variables.NODE_SIZE / 2) + 5,
+                             self.targetParam.scenePos().x()
+                             - variables.NODE_SIZE - 10,
+                             (self.targetParam.scenePos().y() -
+                              variables.NODE_SIZE + 27) +
+                             (20 * self.targetParam.paramIndex) - 18
+                             ).normalized()
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         """Defining the Paint event for the Connection class.
@@ -54,11 +61,16 @@ class Connection(QtWidgets.QGraphicsPathItem):
         else:
             painter.setPen(self.deActivePen)
 
-        start_point = [self.sourceParam.scenePos().x() + (variables.NODE_SIZE /self.sourceParam.paramIndex + 2),
-                       self.sourceParam.scenePos().y() - (variables.NODE_SIZE /(self.sourceParam.paramIndex + 2))]
+        start_point = [self.sourceParam.scenePos().x() +
+                       variables.NODE_SIZE + 10,
+                       (self.sourceParam.scenePos().y() -
+                        variables.NODE_SIZE / 2) + 5]
 
-        end_point = [self.targetParam.scenePos().x() - (variables.NODE_SIZE /self.targetParam.paramIndex + 10),
-                     self.targetParam.scenePos().y() - variables.NODE_SIZE/self.targetParam.paramIndex + 25]
+        end_point = [self.targetParam.scenePos().x()
+                     - variables.NODE_SIZE - 10,
+                     (self.targetParam.scenePos().y() -
+                      variables.NODE_SIZE + (variables.NODE_SIZE/2)) +
+                     ((variables.NODE_SIZE/3) * self.targetParam.paramIndex) - (variables.NODE_SIZE/3)]
 
         path = QtGui.QPainterPath(QtCore.QPointF(start_point[0], start_point[1]))
         path.lineTo(QtCore.QPointF(end_point[0], end_point[1]))
