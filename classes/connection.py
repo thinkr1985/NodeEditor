@@ -29,6 +29,8 @@ class Connection(QtWidgets.QGraphicsPathItem):
         self.activePen.setWidth(2)
         self.deActivePen = QtGui.QPen(QtCore.Qt.black)
         self.deActivePen.setWidth(2)
+        self.arrowShape = ArrowHead(self)
+        self.targetParam.node.scene.addItem(self.arrowShape)
 
     def boundingRect(self):
         """Creating Bounding Rectangle for Connection widget.
@@ -77,6 +79,21 @@ class Connection(QtWidgets.QGraphicsPathItem):
         self.setPath(path)
         painter.drawPath(self.path())
 
+        # setting arrow head position
+        rotDeg = 0
+        xlength = start_point[0] - end_point[0]
+        ylength = start_point[1] - end_point[1]
+        d = math.sqrt(math.pow(xlength, 2) + math.pow(ylength, 2))
+        if d > 0:
+            beta = math.acos(xlength / d)
+            rotDeg = math.degrees(beta)
+            if start_point[1] > end_point[1]:
+                self.arrowShape.setRotation(rotDeg + 180)
+            else:
+                self.arrowShape.setRotation(-rotDeg + 180)
+
+        self.arrowShape.setPos(end_point[0], end_point[1])
+
     def remove(self):
         """This method removes the connection of self.
         Returns:
@@ -89,6 +106,7 @@ class Connection(QtWidgets.QGraphicsPathItem):
                         self.sourceParam.paramName,
                         self.sourceParam.node.label,
             ))
+        self.targetParam.node.scene.removeItem(self.arrowShape)
         self.sourceParam.node.outConnections.remove(self)
         self.sourceParam.outConnections.remove(self)
         if self.sourceParam.node in self.sourceParam.node.downStreamDependencies:
@@ -100,3 +118,25 @@ class Connection(QtWidgets.QGraphicsPathItem):
         self.targetParam.inConnections.remove(self)
 
         self.sourceParam.node.scene.removeItem(self)
+
+
+class ArrowHead(QtWidgets.QGraphicsPolygonItem):
+    def __init__(self, parent=None):
+        super(ArrowHead, self).__init__(parent=parent)
+        self.pen = QtGui.QPen(QtCore.Qt.NoPen)
+        self.brush = QtGui.QBrush(QtCore.Qt.black)
+        self.setFillRule(QtCore.Qt.WindingFill)
+        self.setZValue(-1)
+
+    def boundingRect(self):
+        return QtCore.QRectF(0, 0, 10, 10)
+
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        painter.setBrush(self.brush)
+        painter.setPen(self.pen)
+        point_1_pos = QtCore.QPointF(0, 0)
+        point_2_pos = QtCore.QPointF(-20, -5)
+        point_3_pos = QtCore.QPointF(-20, 5)
+        polygon = QtGui.QPolygonF([point_1_pos, point_2_pos, point_3_pos])
+        self.setPolygon(polygon)
+        painter.drawPolygon(polygon)
