@@ -42,7 +42,7 @@ VIEW_ZOOM_RANGE = [0, 10]
 
 VIEW_ZOOM_CLAMP = False
 
-NODE_SIZE = 60
+NODE_SIZE = 120
 
 NODE_LABEL_FORECOLOR = "#B2B2B2"  # Node Label foreground color
 

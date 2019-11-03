@@ -4,8 +4,8 @@ import os
 
 import variables
 import parameter
-import connection
 import logger
+import note
 
 
 class Node(QtWidgets.QGraphicsItem, object):
@@ -32,7 +32,7 @@ class Node(QtWidgets.QGraphicsItem, object):
         self.inConnections = []
         self.upStreamDependencies = []
         self.downStreamDependencies = []
-        self.notes = None
+        self.note = None
         self.toolTip = toolTip
         self.setToolTip(self.toolTip)
 
@@ -92,6 +92,7 @@ class Node(QtWidgets.QGraphicsItem, object):
         Returns:
             (None): Returns None.
         """
+        self.outlineSelectedPen.setWidth(3)
         # create body rectangle
         body = QtGui.QPainterPath()
         body.setFillRule(QtCore.Qt.WindingFill)
@@ -250,9 +251,12 @@ class Node(QtWidgets.QGraphicsItem, object):
     def remove(self):
         """" This method removes node from scene.
             order is important here.
-            first we need to remove connections then parameters and then
+            first we need to remove note, connections then parameters and then
             we can remove node.
         """
+        # removing note
+        if self.note:
+            self.note.remove()
         # removing out connections
         if self.outConnections:
             for connect in self.outConnections:
@@ -270,29 +274,47 @@ class Node(QtWidgets.QGraphicsItem, object):
         # removing node itself.
         self.scene.removeItem(self)
 
-    def addNote(self, note=None):
+    def addNote(self, note_=None):
         """This method adds note to the note.
+            message exceeds 180 characters will get truncated.
         Args:
-            note (str): Note in string format.
+            note_ (str): Note in string format.
         Returns:
-            (None): Returns None.
+            (note.Note): Returns Note object.
         """
-        self.note = note
+        if self.note:
+            self.note.remove()
+        self.note = note.Note(self, node=self, message=note_)
+        return self.note
 
     def removeNote(self):
         """This method removes note from the node.
         Returns:
             (None): Returns None.
         """
-        self.note = None
+        if self.note:
+            self.note.remove()
+            self.note = None
+        else:
+            logger.log(
+                typ="SKIPPED",
+                msg="No Note found to remove in node {}".format(self.label))
 
-    def getNote(self):
+    def getNote(self, asString=False):
         """"This method gets notes from current node
         Returns:
-            (str): Returns Note as string.
+            (str/note.Note): Returns Note object if asString is False or return
+                            message of the note in string format.
         """
-        return self.note
-
+        if self.note:
+            if asString:
+                return self.note.message
+            else:
+                return self.note
+        else:
+            logger.log(
+                typ="ERROR",
+                msg="No Note found to query in node {}".format(self.label))
 
 
 

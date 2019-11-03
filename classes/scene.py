@@ -43,9 +43,8 @@ class GraphScene(QtWidgets.QGraphicsScene):
             node_1.addParameter(paramName="alpha", paramValue=0)
             node_1.addParameter(paramName="test", paramValue=0)
             node_1.addParameter(paramName="blah", paramValue=0)
-        #note_ = note.Note(self.nodes[0], message="Text Note", node=self.nodes[0])
-
-    # node_2.addParameter(paramName="blend", paramValue=0)
+        self.nodes[0].addNote(note_="this is test note")
+        self.nodes[0].addNote(note_="this is another test note, this is another line this is another test note, this is another line this is another test note, this is another linethis is another test note, this is another linethis is another test note, this is another linethis is another test note, this is another linethis is another test note, this is another linethis is another test note, this is another linethis is another test note, this is another linethis is another test note, this is another line")
 
     def drawBackgroundImage(self):
         # drawing a background image

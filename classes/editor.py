@@ -5,6 +5,7 @@ from PyQt5 import QtWidgets
 import view
 import toolbar
 import variables
+import node
 
 
 class GraphEditor(QtWidgets.QWidget):
@@ -50,6 +51,7 @@ class GraphEditor(QtWidgets.QWidget):
             (None): Returns None.
         """
         self.toolBar.gridButton.clicked.connect(self.toggleGrid)
+        self.toolBar.notesButton.clicked.connect(self.toggleNote)
 
     def toggleGrid(self):
         """This method toggles the grid visibility for scene.
@@ -58,12 +60,29 @@ class GraphEditor(QtWidgets.QWidget):
         """
         if self.graphicsView.scene.drawGrid:
             self.graphicsView.scene.drawGrid = False
-            self.graphicsView.scene.update()
             self.toolBar.gridButton.setOffColor()
         else:
             self.graphicsView.scene.drawGrid = True
-            self.graphicsView.scene.update()
             self.toolBar.gridButton.setOnColor()
+        self.graphicsView.scene.update()
+
+    def toggleNote(self):
+        """This methos toggles the notes display in scene.
+        Returns:
+            (None): Returns None.
+        """
+        all_items = (self.graphicsView.scene.items())
+        if not all_items:
+            return
+        for item in all_items:
+            if isinstance(item, node.Node):
+                if item.note:
+                    display = item.note.displayNote
+                    if display:
+                        item.note.displayNote = False
+                    else:
+                        item.note.displayNote = True
+        self.graphicsView.scene.update()
 
 
 if __name__ == "__main__":
