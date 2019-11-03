@@ -43,6 +43,10 @@ class GraphScene(QtWidgets.QGraphicsScene):
             node_1.addParameter(paramName="blah", paramValue=0)
 
     def drawBackgroundImage(self):
+        """This method draws image to background of scene.
+        Returns:
+            (None): Returns None.
+        """
         # drawing a background image
         if variables.SC_DISPLAY_BG_IMAGE:
             item = self.backGroundImage = QtWidgets.QGraphicsPixmapItem(self.backGroundImage)

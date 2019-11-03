@@ -59,9 +59,11 @@ class Connection(QtWidgets.QGraphicsPathItem):
         """
         painter.setBrush(QtCore.Qt.black)
         if self.isSelected():
+            self.arrowShape.selected = True
             painter.setPen(self.activePen)
         else:
             painter.setPen(self.deActivePen)
+            self.arrowShape.selected = False
 
         start_point = [self.sourceParam.scenePos().x() +
                        variables.NODE_SIZE + 10,
@@ -92,6 +94,7 @@ class Connection(QtWidgets.QGraphicsPathItem):
             else:
                 self.arrowShape.setRotation(-rotDeg + 180)
 
+        # calculating midpoint
         self.arrowShape.setPos(end_point[0], end_point[1])
 
     def remove(self):
@@ -121,19 +124,32 @@ class Connection(QtWidgets.QGraphicsPathItem):
 
 
 class ArrowHead(QtWidgets.QGraphicsPolygonItem):
+    """Creating a ArrowHead class by inheriting
+        QtWidgets.QtGraphicsPolygonItem"""
     def __init__(self, parent=None):
+        """Initializing ArrowHead class
+        Args:
+            parent (QtWidgets.QGraphicsItem): Parent widget of this class.
+        """
         super(ArrowHead, self).__init__(parent=parent)
         self.pen = QtGui.QPen(QtCore.Qt.NoPen)
         self.brush = QtGui.QBrush(QtCore.Qt.black)
         self.setFillRule(QtCore.Qt.WindingFill)
         self.setZValue(-1)
+        self.selected = False
 
     def boundingRect(self):
+        """This method sets bounding box rectangle for this class"""
         return QtCore.QRectF(0, 0, 10, 10)
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
-        painter.setBrush(self.brush)
-        painter.setPen(self.pen)
+        """This method paints widget on the screen"""
+        if self.selected:
+            painter.setBrush(QtGui.QBrush(QtCore.Qt.green))
+            painter.setPen(self.pen)
+        else:
+            painter.setBrush(self.brush)
+            painter.setPen(self.pen)
         point_1_pos = QtCore.QPointF(0, 0)
         point_2_pos = QtCore.QPointF(-20, -5)
         point_3_pos = QtCore.QPointF(-20, 5)
