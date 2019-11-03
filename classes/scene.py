@@ -4,14 +4,12 @@ import math
 
 import variables
 import node
-import connection
 import logger
-import note
 
 
 class GraphScene(QtWidgets.QGraphicsScene):
     """Creating GraphSC class by inheriting QGraphicsScene"""
-    def __init__(self, parent=None, backgroundImage=None):
+    def __init__(self, parent=None):
         """Initializing GraphScene class.
         Args:
             parent (QtWidgets.QGraphicsView): Parent widget for this class.
@@ -43,8 +41,6 @@ class GraphScene(QtWidgets.QGraphicsScene):
             node_1.addParameter(paramName="alpha", paramValue=0)
             node_1.addParameter(paramName="test", paramValue=0)
             node_1.addParameter(paramName="blah", paramValue=0)
-        self.nodes[0].addNote(note_="this is test note")
-        self.nodes[0].addNote(note_="this is another test note, this is another line this is another test note, this is another line this is another test note, this is another linethis is another test note, this is another linethis is another test note, this is another linethis is another test note, this is another linethis is another test note, this is another linethis is another test note, this is another linethis is another test note, this is another linethis is another test note, this is another line")
 
     def drawBackgroundImage(self):
         # drawing a background image
