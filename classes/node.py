@@ -316,6 +316,19 @@ class Node(QtWidgets.QGraphicsItem, object):
                 typ="ERROR",
                 msg="No Note found to query in node {}".format(self.label))
 
+    def disableViewUpdate(self):
+        self.scene.view.viewportUpdateMode(
+            QtWidgets.QGraphicsView.NoViewportUpdate)
+
+    def enbableViewUpdate(self):
+        self.scene.view.viewportUpdateMode(
+            QtWidgets.QGraphicsView.FullViewportUpdate)
+
+    def compute(self):
+        self.disableViewUpdate()
+
+        self.enbableViewUpdate()
+
 
 
 

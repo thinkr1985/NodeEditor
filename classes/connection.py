@@ -31,6 +31,7 @@ class Connection(QtWidgets.QGraphicsPathItem):
         self.deActivePen.setWidth(2)
         self.arrowShape = ArrowHead(self)
         self.targetParam.node.scene.addItem(self.arrowShape)
+        self.targetNode.compute()
 
     def boundingRect(self):
         """Creating Bounding Rectangle for Connection widget.
@@ -121,6 +122,9 @@ class Connection(QtWidgets.QGraphicsPathItem):
         self.targetParam.inConnections.remove(self)
 
         self.sourceParam.node.scene.removeItem(self)
+
+    def compute(self):
+        self.targetNode.compute()
 
 
 class ArrowHead(QtWidgets.QGraphicsPolygonItem):

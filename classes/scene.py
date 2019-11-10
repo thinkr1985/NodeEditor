@@ -9,13 +9,14 @@ import logger
 
 class GraphScene(QtWidgets.QGraphicsScene):
     """Creating GraphSC class by inheriting QGraphicsScene"""
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, view=None):
         """Initializing GraphScene class.
         Args:
             parent (QtWidgets.QGraphicsView): Parent widget for this class.
         """
         super(GraphScene, self).__init__(parent)
         self.drawGrid = True
+        self.view = view
         self.backGroundImage = QtGui.QPixmap(variables.WALLPAPER)
         self.drawBackgroundImage()
         # color settings
@@ -127,4 +128,7 @@ class GraphScene(QtWidgets.QGraphicsScene):
         self.nodes.remove(node)
         self.removeItem(node)
 
-
+    def compute(self):
+        if self.nodes:
+            for node in self.nodes:
+                node.compute()

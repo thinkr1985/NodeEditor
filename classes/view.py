@@ -19,7 +19,7 @@ class GraphView(QtWidgets.QGraphicsView):
         super(GraphView, self).__init__(parent)
         self.setMouseTracking(True)
         self.graphicsPixmapItem = None
-        self.scene = scene.GraphScene(parent=self)
+        self.scene = scene.GraphScene(parent=self, view=self)
         self.setScene(self.scene)
         self.setRenderHints(variables.VIEW_HIGH_ANTI_ALIASING)
         self.setViewportUpdateMode(variables.VIEW_UPDATE_MODE)
